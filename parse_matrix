@@ -1,0 +1,10 @@
+def parse_matrix(self, matrix_str, rows, cols):
+        matrix = [list(map(int, row.strip().split())) for row in matrix_str.strip().split(",")]
+        if len(matrix) != rows or any(len(row) != cols for row in matrix):
+            raise ValueError("Matrix dimensions do not match input count.")
+        return matrix
+
+# Run GUI
+root = tk.Tk()
+app = DeadlockGUI(root)
+root.mainloop()
