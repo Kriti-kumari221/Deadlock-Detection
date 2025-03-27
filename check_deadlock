@@ -1,0 +1,26 @@
+def check_deadlock(self):
+        try:
+            # Get Inputs
+            processes = list(map(int, self.processes_entry.get().strip().split()))
+            resources = list(map(int, self.resources_entry.get().strip().split()))
+            allocation = self.parse_matrix(self.allocation_entry.get(), len(processes), len(resources))
+            max_need = self.parse_matrix(self.max_need_entry.get(), len(processes), len(resources))
+            available = list(map(int, self.available_entry.get().strip().split()))
+
+            if len(available) != len(resources):
+                messagebox.showerror("Input Error", "Available resources count must match resource count.")
+                return
+
+            # Run Deadlock Detection
+            detector = DeadlockDetection(processes, resources, allocation, max_need, available)
+            is_deadlock, safe_sequence, steps_info = detector.detect_deadlock()
+
+            if is_deadlock:
+                messagebox.showerror("❌ Deadlock Detected", f"⚠ The system is in a DEADLOCK state!\n\n{steps_info}")
+            else:
+                messagebox.showinfo("✅ Safe State", f"🎉 The system is in a SAFE state!\n\n{steps_info}")
+
+            detector.visualize_graph()
+
+        except Exception as e:
+            messagebox.showerror("Input Error", f"Invalid input format! Please check your entries.\nError: {str(e)}")
