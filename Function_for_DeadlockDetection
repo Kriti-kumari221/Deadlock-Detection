@@ -1,0 +1,32 @@
+class DeadlockDetection:
+    def __init__(self, processes, resources, allocation, max_need, available):
+        self.processes = processes
+        self.resources = resources
+        self.allocation = np.array(allocation, dtype=int)
+        self.max_need = np.array(max_need, dtype=int)
+        self.available = np.array(available, dtype=int)
+        self.need = self.max_need - self.allocation
+        print ("1st commit")
+
+    def is_safe_state(self):
+        work = self.available.copy()
+        finish = [False] * len(self.processes)
+        safe_sequence = []
+        steps_info = "\n🔍 **Safe State Calculation Steps:**\n\n"
+
+        while len(safe_sequence) < len(self.processes):
+            allocated = False
+            for i in range(len(self.processes)):
+                if not finish[i] and np.all(self.need[i] <= work):
+                    steps_info += f"✅ Process P{i} can execute (Need ≤ Available)\n"
+                    work += self.allocation[i]
+                    finish[i] = True
+                    safe_sequence.append(f"P{i}")
+                    allocated = True
+                    break
+            if not allocated:
+                steps_info += "❌ No process can proceed further, leading to DEADLOCK!\n"
+                return False, [], steps_info
+
+        steps_info += "\n✅ **Safe Sequence:** " + " ➡ ".join(safe_sequence)
+        return True, safe_sequence, steps_info
