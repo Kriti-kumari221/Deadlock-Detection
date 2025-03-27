@@ -1,0 +1,50 @@
+def visualize_graph(self):
+        G = nx.DiGraph()
+
+        # Add Nodes with Labels
+        for i in self.processes:
+            G.add_node(f"P{i}", color='#4D9DE0')  # Process Node (Blue)
+        for j in self.resources:
+            G.add_node(f"R{j}", color='#E15554')  # Resource Node (Red)
+
+        edge_colors = {}
+        labels = {}
+
+        # Add Edges (Process -> Resource Allocation & Resource -> Process Request)
+        for i, p in enumerate(self.processes):
+            for j, r in enumerate(self.resources):
+                if self.allocation[i][j] > 0:
+                    G.add_edge(f"P{p}", f"R{r}", color='green', width=2.5)
+                    labels[(f"P{p}", f"R{r}")] = "Allocated"
+                if self.need[i][j] > 0:
+                    G.add_edge(f"R{r}", f"P{p}", color='red', width=2.5)
+                    labels[(f"R{r}", f"P{p}")] = "Request"
+
+        # Graph Layout (Circular for better readability)
+        pos = nx.circular_layout(G)
+        node_colors = [G.nodes[n]['color'] for n in G.nodes]
+
+        # Set Figure Size & Background
+        plt.figure(figsize=(9, 7), facecolor="#F7F7F7")
+
+        # Draw Graph with Improved Styles
+        edges = G.edges(data=True)
+        edge_colors = [d['color'] for _, _, d in edges]
+        edge_widths = [d['width'] for _, _, d in edges]
+
+        nx.draw(G, pos, with_labels=True, node_color=node_colors, node_size=2800,
+                font_size=14, font_weight="bold", edgecolors="black", linewidths=1.8)
+
+        nx.draw_networkx_edges(G, pos, edgelist=G.edges(), edge_color=edge_colors, width=edge_widths)
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, font_color='black', font_size=11)
+
+        # Add an Enhanced Legend
+        legend_p = mpatches.Patch(color='#4D9DE0', label="Process (P)")
+        legend_r = mpatches.Patch(color='#E15554', label="Resource (R)")
+        legend_alloc = mpatches.Patch(color='green', label="Allocated")
+        legend_request = mpatches.Patch(color='red', label="Request")
+        
+        plt.legend(handles=[legend_p, legend_r, legend_alloc, legend_request], loc="upper right", fontsize=11)
+        
+        plt.title("🔍 Deadlock Detection Graph", fontsize=16, fontweight="bold", color="#333")
+        plt.show()
