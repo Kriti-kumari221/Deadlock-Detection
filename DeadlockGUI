@@ -1,0 +1,32 @@
+class DeadlockGUI:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("🔍 Deadlock Detection System")
+        self.root.geometry("700x600")
+        self.root.configure(bg="#f0f0f0")
+
+        style = ttk.Style()
+        style.configure("TButton", font=("Arial", 12), padding=10)
+        style.configure("TLabel", font=("Arial", 14), background="#f0f0f0")
+
+        # Header
+        ttk.Label(root, text="🔍 Deadlock Detection System", font=("Arial", 16, "bold")).pack(pady=10)
+        ttk.Label(root, text="Enter system details below:", font=("Arial", 12)).pack(pady=5)
+
+        # Input Fields
+        self.processes_entry = self.create_labeled_entry("Processes (e.g., 0 1 2 3)")
+        self.resources_entry = self.create_labeled_entry("Resources (e.g., 0 1)")
+        self.allocation_entry = self.create_labeled_entry("Allocation Matrix (comma-separated rows, space-separated values)")
+        self.max_need_entry = self.create_labeled_entry("Max Need Matrix (comma-separated rows, space-separated values)")
+        self.available_entry = self.create_labeled_entry("Available Resources (space-separated)")
+
+        # Check Deadlock Button
+        ttk.Button(root, text="Check Deadlock", command=self.check_deadlock, style="TButton").pack(pady=20)
+
+    def create_labeled_entry(self, label_text):
+        frame = ttk.Frame(self.root)
+        frame.pack(pady=5, fill="x", padx=20)
+        ttk.Label(frame, text=label_text, font=("Arial", 11)).pack(anchor="w")
+        entry = ttk.Entry(frame, font=("Arial", 12))
+        entry.pack(fill="x", padx=5, pady=3)
+        return entry
